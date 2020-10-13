@@ -1,0 +1,4 @@
+rootProject.name = 'microservice-employers'
+include 'employers-api'
+include 'employers-db'
+include 'employers-impl'

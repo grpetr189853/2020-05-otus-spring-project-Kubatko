@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Add Employer</title>
+
+    <div th:replace="fragments/header :: header-head"></div>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container my-5">
+      <h2 class="mb-5">New Employer</h2>
+      <p class="alert alert-danger" th:if="${error != null}" th:text="${error}"></p>
+      <div class="row">
+        <div class="col-md-12">
+          <form action="#" th:action="@{/ees/employers/add}" th:object="${employer}" method="post">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="name" class="col-form-label">Name</label>
+                <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Name">
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+              </div>
+            </div>
+            <div class="row">
+              <table class="table table-striped table-responsive-md">
+                <thead>
+                  <tr>
+                    <th>Критерий</th>
+                    <th>Рейтинг</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="criterion, itemStat : *{criteria}">
+                    <td>
+                      <input type="text" th:field="*{criteria[__${itemStat.index}__].name}" class="form-control" readonly="readonly">
+                    </td>
+                    <td>
+                      <input type="number" th:field="*{criteria[__${itemStat.index}__].rating}" class="form-control" placeholder="Rating">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mt-5">
+                <input type="submit" class="btn btn-primary" value="Add Employer">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

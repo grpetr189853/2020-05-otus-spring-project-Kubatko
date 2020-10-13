@@ -1,0 +1,118 @@
+version: "3.8"
+
+volumes:
+  postgres-data:
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      TZ: 'Europe/Moscow'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ees
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    restart: unless-stopped
+
+  discovery:
+    container_name: discovery
+    image: ees/discovery-server
+    environment:
+      TZ: 'Europe/Moscow'
+    ports:
+      - 8761:8761
+    expose:
+      - 8761
+    restart: unless-stopped
+
+  users:
+    container_name: users
+    image: ees/users
+    environment:
+      TZ: 'Europe/Moscow'
+      DISCOVERY_HOST: discovery
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - 8081:8081
+      - 5006:5005
+    expose:
+      - 8081
+      - 5006
+    restart: unless-stopped
+    depends_on:
+      - db
+      - discovery
+
+  employers:
+    container_name: employers
+    image: ees/employers
+    environment:
+      TZ: 'Europe/Moscow'
+      DISCOVERY_HOST: discovery
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - 8082:8082
+      - 5007:5007
+    expose:
+      - 8082
+      - 5007
+    restart: unless-stopped
+    depends_on:
+      - db
+      - discovery
+
+  criteria:
+    container_name: criteria
+    image: ees/criteria
+    environment:
+      TZ: 'Europe/Moscow'
+      DISCOVERY_HOST: discovery
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - 8083:8083
+      - 5008:5008
+    expose:
+      - 8083
+      - 5008
+    restart: unless-stopped
+    depends_on:
+      - db
+      - discovery
+
+  ui:
+    container_name: ui
+    image: ees/ui
+    environment:
+      TZ: 'Europe/Moscow'
+      DISCOVERY_HOST: discovery
+      USERS_HOST: users
+      EMPLOYERS_HOST: employers
+      CRITERIA_HOST: criteria
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - 8080:8080
+      - 5005:5005
+    expose:
+      - 80
+      - 5005
+    restart: unless-stopped
+    depends_on:
+      - db
+      - discovery
+      - users
+      - employers
+      - criteria

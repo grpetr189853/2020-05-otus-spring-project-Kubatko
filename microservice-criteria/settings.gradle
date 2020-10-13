@@ -1,0 +1,4 @@
+rootProject.name = 'microservice-criteria'
+include 'criteria-api'
+include 'criteria-db'
+include 'criteria-impl'

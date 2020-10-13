@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+  <head>
+  </head>
+  <body>
+    <div th:fragment="footer">
+      <footer class="footer">
+        <div class="container">
+          <p class="text-muted">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear().toString())
+            </script>
+            Sergey Kubatko. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

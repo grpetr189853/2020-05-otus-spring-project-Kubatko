@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Update Criterion</title>
+
+    <div th:replace="fragments/header :: header-head"></div>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container my-5">
+      <h2 class="mb-5">Update Criterion</h2>
+      <p class="alert alert-danger" th:if="${error != null}" th:text="${error}"></p>
+      <div class="row">
+        <div class="col-md-12">
+          <form action="#" th:action="@{/ees/criteria/update/{name}(name=${criterion.name})}" th:object="${criterion}" method="post">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="name" class="col-form-label">Name</label>
+                <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Name">
+              </div>
+              <div class="form-group col-md-12">
+                <label for="weight" class="col-form-label">Weight</label>
+                <input type="number" th:field="*{weight}" class="form-control" id="weight" placeholder="Weight">
+              </div>
+              <div class="row">
+                <div class="col-md-12 mt-5">
+                  <input type="submit" class="btn btn-primary" value="Update Criterion">
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

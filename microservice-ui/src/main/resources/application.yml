@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ees?currentSchema=ui
+    username: ui
+    password: ui
+
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_HOST:localhost}:8761/eureka
+
+zuul:
+  routes:
+    users:
+      path: /users/**
+      url: http://${USERS_HOST:localhost}:8081/users
+    employers:
+      path: /employers/**
+      url: http://${EMPLOYERS_HOST:localhost}:8082/employers
+    criteria:
+      path: /criteria/**
+      url: http://${CRITERIA_HOST:localhost}:8083/criteria
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    ru.skubatko.dev: DEBUG
