@@ -1,8 +1,8 @@
 package ru.skubatko.dev.ees.ui.controller;
 
 import ru.skubatko.dev.ees.ui.dto.EesEmployerDto;
-import ru.skubatko.dev.ees.ui.feign.EmployerResourceFeignClient;
-import ru.skubatko.dev.ees.ui.mapper.EesEmployerDtoToResourceMapper;
+import ru.skubatko.dev.ees.ui.feign.EmployersResourceFeignClient;
+import ru.skubatko.dev.ees.ui.mappers.EesEmployerDtoToResourceMapper;
 import ru.skubatko.dev.ees.ui.service.EesCriterionService;
 import ru.skubatko.dev.ees.ui.service.EesEmployerService;
 
@@ -30,7 +30,7 @@ public class EmployersController {
 
     private final EesEmployerService employerService;
     private final EesCriterionService criterionService;
-    private final EmployerResourceFeignClient employerResource;
+    private final EmployersResourceFeignClient employerResource;
     private final EesEmployerDtoToResourceMapper toResourceMapper;
 
     @GetMapping("/ees/employers")

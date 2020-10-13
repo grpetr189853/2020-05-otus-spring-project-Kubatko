@@ -1,9 +1,9 @@
-package ru.skubatko.dev.ees.users.resource;
+package ru.skubatko.dev.ees.users.resources;
 
 import ru.skubatko.dev.ees.users.domain.User;
 import ru.skubatko.dev.ees.users.dto.UserDto;
-import ru.skubatko.dev.ees.users.mapper.ToDtoMapper;
-import ru.skubatko.dev.ees.users.mapper.ToEntityMapper;
+import ru.skubatko.dev.ees.users.mappers.ToDtoMapper;
+import ru.skubatko.dev.ees.users.mappers.ToEntityMapper;
 import ru.skubatko.dev.ees.users.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class UsersResourceImpl implements UsersResource {
 
     @Override
     @GetMapping("/users/{name}")
-    public Optional<UserDto> findByName(@PathVariable String name) {
+    public Optional<UserDto> findByName(@PathVariable("name") String name) {
         Optional<User> user = service.findByName(name);
         if (user.isEmpty()) {
             return Optional.empty();
@@ -58,7 +58,7 @@ public class UsersResourceImpl implements UsersResource {
 
     @Override
     @DeleteMapping("/users/{name}")
-    public void deleteByName(@PathVariable String name) {
+    public void deleteByName(@PathVariable("name") String name) {
         service.deleteByName(name);
     }
 }

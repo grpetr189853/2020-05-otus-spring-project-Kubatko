@@ -1,4 +1,4 @@
-package ru.skubatko.dev.ees.users.resource;
+package ru.skubatko.dev.ees.users.resources;
 
 import ru.skubatko.dev.ees.users.dto.UserDto;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface UsersResource {
 
     @GetMapping("/users/{name}")
-    Optional<UserDto> findByName(@PathVariable String name);
+    Optional<UserDto> findByName(@PathVariable("name") String name);
 
     @GetMapping("/users")
     List<UserDto> findAll();
@@ -27,5 +27,5 @@ public interface UsersResource {
     void update(@PathVariable("name") String name, @RequestBody UserDto dto);
 
     @DeleteMapping("/users/{name}")
-    void deleteByName(@PathVariable String name);
+    void deleteByName(@PathVariable("name") String name);
 }

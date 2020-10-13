@@ -4,8 +4,9 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'org.springframework.boot' version '2.3.3.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 }
+
+apply plugin: 'io.spring.dependency-management'
 
 group = 'ru.skubatko.dev.ess'
 description = 'ui'
@@ -14,7 +15,7 @@ version = '0.0.1'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-mainClassName = 'ru.skubatko.dev.ees.ui.MainApp'
+mainClassName = 'ru.skubatko.dev.ees.ui.EesMainApp'
 
 bootBuildImage {
     imageName = "ees/ui"
@@ -48,6 +49,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -55,6 +57,9 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 
     implementation 'org.webjars:bootstrap:3.3.7'
     implementation 'org.webjars:jquery:2.2.4'
@@ -74,6 +79,29 @@ dependencies {
     testImplementation 'com.h2database:h2'
 }
 
+idea {
+    project {
+        languageLevel = 11
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs = ['-Xlint:deprecation']
+}
+
 test {
+    useJUnitPlatform()
+    filter { excludeTestsMatching '*ITCase*' }
+}
+
+task integrationTest(type: Test) {
+    group 'verification'
+    description 'Integration tests'
+    filter { includeTestsMatching '*ITCase*' }
     useJUnitPlatform()
 }

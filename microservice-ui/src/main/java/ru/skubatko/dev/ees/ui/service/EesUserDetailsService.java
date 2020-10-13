@@ -16,11 +16,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EesUserDetailsService implements UserDetailsService {
 
-    private final UsersResourceFeignClient usersClient;
+    private final UsersResourceFeignClient usersResource;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<UserDto> user = usersClient.findByName(userName);
+        Optional<UserDto> user = usersResource.findByName(userName);
         user.orElseThrow(() -> new UsernameNotFoundException(userName + " not found"));
         return user.map(EesUserDetails::new).get();
     }
