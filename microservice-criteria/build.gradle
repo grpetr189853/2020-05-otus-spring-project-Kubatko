@@ -29,7 +29,7 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
-    mainClassName = 'ru.skubatko.dev.ees.criteria.App'
+    mainClassName = 'ru.skubatko.dev.ees.criteria.CriteriaServiceApp'
 
     bootBuildImage {
         imageName = "ees/criteria"

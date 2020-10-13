@@ -1,18 +1,14 @@
-package ru.skubatko.dev.ees.ui;
+package ru.skubatko.dev.ees.users;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableZuulProxy
-@EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
-public class App {
+public class UsersServiceApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(UsersServiceApp.class, args);
     }
 }

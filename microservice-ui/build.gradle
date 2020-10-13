@@ -14,7 +14,7 @@ version = '0.0.1'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-mainClassName = 'ru.skubatko.dev.ees.ui.App'
+mainClassName = 'ru.skubatko.dev.ees.ui.MainApp'
 
 bootBuildImage {
     imageName = "ees/ui"

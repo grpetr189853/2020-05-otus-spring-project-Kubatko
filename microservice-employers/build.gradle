@@ -29,7 +29,7 @@ allprojects {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
-    mainClassName = 'ru.skubatko.dev.ees.employers.App'
+    mainClassName = 'ru.skubatko.dev.ees.employers.EmployersServiceApp'
 
     bootBuildImage {
         imageName = "ees/employers"
