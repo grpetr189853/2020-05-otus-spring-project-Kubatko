@@ -45,10 +45,6 @@ zuul:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
 
-ribbon:
-  ConnectTimeout: 3000
-  ReadTimeout: 60000
-
 feign:
   hystrix:
     enabled: true
@@ -65,10 +61,14 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 4000
+            timeoutInMilliseconds: 3000
       circuitBreaker:
         enabled: true
         requestVolumeThreshold: 2
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
 
 management:
   endpoints:

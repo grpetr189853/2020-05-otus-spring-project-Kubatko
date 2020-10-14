@@ -6,7 +6,10 @@ import ru.skubatko.dev.ees.ui.repository.EesEmployerRepository;
 import ru.skubatko.dev.ees.ui.repository.EesRatingRepository;
 import ru.skubatko.dev.ees.ui.repository.EesUserRepository;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,8 +17,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EesRatingServiceImpl implements EesRatingService {
@@ -24,9 +29,12 @@ public class EesRatingServiceImpl implements EesRatingService {
     private final EesEmployerRepository employerRepository;
     private final EesRatingRepository ratingRepository;
 
-    @Override
+    @HystrixCommand(commandKey = "findRatingsKey", fallbackMethod = "buildFallbackRatings")
     @Transactional(readOnly = true)
+    @Override
     public List<EesRatingDto> findByUserDesc(String userName) {
+        emulateServiceDelay();
+
         Optional<EesUser> userOptional = userRepository.findByName(userName);
         if (userOptional.isEmpty()) {
             return Collections.emptyList();
@@ -44,5 +52,16 @@ public class EesRatingServiceImpl implements EesRatingService {
                        .sorted(Comparator.comparingInt(EesRatingDto::getEmployerRating).reversed())
                        .collect(Collectors.toList())
                 ;
+    }
+
+    @SuppressWarnings("unused")
+    public List<EesRatingDto> buildFallbackRatings(String userName) {
+        log.warn("buildFallbackRatings() - verdict: ratings service is unavailable");
+        return Collections.emptyList();
+    }
+
+    @SneakyThrows
+    private void emulateServiceDelay() {
+        Thread.sleep(1000 + new Random().nextInt(4000));
     }
 }
