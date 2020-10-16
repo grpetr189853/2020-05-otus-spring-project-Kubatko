@@ -20,7 +20,10 @@ spring:
 
 eureka:
   instance:
+    instanceId: ${spring.application.name}:${server.port}
     preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
   client:
     registerWithEureka: true
     fetchRegistry: true
@@ -38,6 +41,46 @@ zuul:
     criteria:
       path: /criteria/**
       url: http://${CRITERIA_HOST:localhost}:8083/criteria
+  host:
+    connect-timeout-millis: 60000
+    socket-timeout-millis: 60000
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+      circuitBreaker:
+        enabled: true
+        requestVolumeThreshold: 2
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
 
 logging:
   level:

@@ -1,8 +1,8 @@
 package ru.skubatko.dev.ees.ui.controller;
 
 import ru.skubatko.dev.ees.ui.dto.EesCriterionDto;
-import ru.skubatko.dev.ees.ui.feign.CriterionResourceFeignClient;
-import ru.skubatko.dev.ees.ui.mapper.EesCriterionDtoToResourceMapper;
+import ru.skubatko.dev.ees.ui.feign.CriteriaResourceFeignClient;
+import ru.skubatko.dev.ees.ui.mappers.EesCriterionDtoToResourceMapper;
 import ru.skubatko.dev.ees.ui.service.EesCriterionService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import java.util.Objects;
 public class CriteriaController {
 
     private final EesCriterionService criterionService;
-    private final CriterionResourceFeignClient criterionResource;
+    private final CriteriaResourceFeignClient criterionResource;
     private final EesCriterionDtoToResourceMapper toResourceMapper;
 
     @GetMapping("/ees/criteria")

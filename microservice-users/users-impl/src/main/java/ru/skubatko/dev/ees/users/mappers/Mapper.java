@@ -1,4 +1,4 @@
-package ru.skubatko.dev.ees.users.mapper;
+package ru.skubatko.dev.ees.users.mappers;
 
 @FunctionalInterface
 public interface Mapper<T, R> {

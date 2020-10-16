@@ -31,6 +31,20 @@ services:
       - 8761
     restart: unless-stopped
 
+  hystrix-dashboard:
+    container_name: hystrix-dashboard
+    build:
+      context: ./hystrix-dashboard
+      dockerfile: Dockerfile
+    image: ees/hystrix-dashboard
+    environment:
+      TZ: 'Europe/Moscow'
+    ports:
+      - 8788:8788
+    expose:
+      - 8788
+    restart: unless-stopped
+
   users:
     container_name: users
     image: ees/users

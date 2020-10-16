@@ -1,16 +1,16 @@
-package ru.skubatko.dev.ees.ui.mapper;
+package ru.skubatko.dev.ees.users.mappers;
 
-import ru.skubatko.dev.ees.ui.dto.EesUserDto;
-import ru.skubatko.dev.ees.ui.feign.dto.UserDto;
+import ru.skubatko.dev.ees.users.domain.User;
+import ru.skubatko.dev.ees.users.dto.UserDto;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class ResourceUserToDtoMapper implements Mapper<UserDto, EesUserDto> {
+public class ToDtoMapper implements Mapper<User, UserDto> {
 
     @Override
-    public EesUserDto map(UserDto user) {
-        return new EesUserDto()
+    public UserDto map(User user) {
+        return new UserDto()
                        .setName(user.getName())
                        .setPassword(user.getPassword())
                        .setIsActive(user.getIsActive())

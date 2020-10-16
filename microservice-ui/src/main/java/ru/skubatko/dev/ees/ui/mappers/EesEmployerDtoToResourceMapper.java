@@ -1,4 +1,4 @@
-package ru.skubatko.dev.ees.ui.mapper;
+package ru.skubatko.dev.ees.ui.mappers;
 
 import ru.skubatko.dev.ees.ui.dto.EesEmployerDto;
 import ru.skubatko.dev.ees.ui.feign.dto.EmployerDto;

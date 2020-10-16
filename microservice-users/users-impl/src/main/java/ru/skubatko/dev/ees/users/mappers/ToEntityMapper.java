@@ -1,4 +1,4 @@
-package ru.skubatko.dev.ees.users.mapper;
+package ru.skubatko.dev.ees.users.mappers;
 
 import ru.skubatko.dev.ees.users.domain.User;
 import ru.skubatko.dev.ees.users.dto.UserDto;

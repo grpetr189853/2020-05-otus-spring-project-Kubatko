@@ -3,9 +3,9 @@ package ru.skubatko.dev.ees.ui.service;
 import ru.skubatko.dev.ees.ui.domain.EesUser;
 import ru.skubatko.dev.ees.ui.dto.EesUserDto;
 import ru.skubatko.dev.ees.ui.feign.UsersResourceFeignClient;
-import ru.skubatko.dev.ees.ui.mapper.EesUserDtoToResourceMapper;
-import ru.skubatko.dev.ees.ui.mapper.EesUserToDtoMapper;
-import ru.skubatko.dev.ees.ui.mapper.ResourceUserToDtoMapper;
+import ru.skubatko.dev.ees.ui.mappers.EesUserDtoToResourceMapper;
+import ru.skubatko.dev.ees.ui.mappers.EesUserToDtoMapper;
+import ru.skubatko.dev.ees.ui.mappers.ResourceUserToDtoMapper;
 import ru.skubatko.dev.ees.ui.repository.EesUserRepository;
 
 import lombok.RequiredArgsConstructor;
