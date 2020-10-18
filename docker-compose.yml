@@ -43,6 +43,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
+      DISCOVERY_HOST: discovery
       WAIT_HOSTS: config-server:8888
     ports:
       - 8761:8761
