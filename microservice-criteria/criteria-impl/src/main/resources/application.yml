@@ -3,20 +3,25 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ees?currentSchema=criteria
-    username: criteria
-    password: criteria
+    platform: postgres
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:postgres}?currentSchema=criteria
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+    schema: classpath:db/changelog/00_create_schema.sql
+    initialization-mode: always
+    continue-on-error: true
 
   jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: false
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
     open-in-view: false
+    generate-ddl: false
 
   liquibase:
-    enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: criteria
 
   sleuth:
     sampler:

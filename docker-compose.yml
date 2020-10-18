@@ -9,9 +9,9 @@ services:
     image: postgres
     environment:
       TZ: 'Europe/Moscow'
+      POSTGRES_DB: ees
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ees
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -22,6 +22,9 @@ services:
 
   discovery:
     container_name: discovery
+    build:
+      context: ./discovery-server
+      dockerfile: Dockerfile
     image: ees/discovery-server
     environment:
       TZ: 'Europe/Moscow'
@@ -39,21 +42,40 @@ services:
     image: ees/hystrix-dashboard
     environment:
       TZ: 'Europe/Moscow'
+      DISCOVERY_HOST: discovery
     ports:
       - 8788:8788
     expose:
       - 8788
     restart: unless-stopped
+    depends_on:
+      - discovery
+
+  zipkin:
+    container_name: zipkin
+    image: openzipkin/zipkin
+    environment:
+      TZ: 'Europe/Moscow'
+    ports:
+      - 9411:9411
+    expose:
+      - 9411
+    restart: unless-stopped
 
   users:
     container_name: users
+    build:
+      context: ./microservice-users
+      dockerfile: Dockerfile
     image: ees/users
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: ees
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - 8081:8081
       - 5006:5005
@@ -64,16 +86,22 @@ services:
     depends_on:
       - db
       - discovery
+      - zipkin
 
   employers:
     container_name: employers
+    build:
+      context: ./microservice-employers
+      dockerfile: Dockerfile
     image: ees/employers
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: ees
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - 8082:8082
       - 5007:5007
@@ -84,16 +112,22 @@ services:
     depends_on:
       - db
       - discovery
+      - zipkin
 
   criteria:
     container_name: criteria
+    build:
+      context: ./microservice-criteria
+      dockerfile: Dockerfile
     image: ees/criteria
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: ees
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - 8083:8083
       - 5008:5008
@@ -104,9 +138,13 @@ services:
     depends_on:
       - db
       - discovery
+      - zipkin
 
   ui:
     container_name: ui
+    build:
+      context: ./microservice-ui
+      dockerfile: Dockerfile
     image: ees/ui
     environment:
       TZ: 'Europe/Moscow'
@@ -114,9 +152,11 @@ services:
       USERS_HOST: users
       EMPLOYERS_HOST: employers
       CRITERIA_HOST: criteria
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ees
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: ees
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - 8080:8080
       - 5005:5005
@@ -127,6 +167,7 @@ services:
     depends_on:
       - db
       - discovery
+      - zipkin
       - users
       - employers
       - criteria

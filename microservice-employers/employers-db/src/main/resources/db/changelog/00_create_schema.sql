@@ -5,7 +5,7 @@ CREATE USER employers WITH password 'employers';
 CREATE USER employers_ms WITH password 'employers_ms';
 
 -- create schema
-CREATE SCHEMA employers AUTHORIZATION employers;
+CREATE SCHEMA IF NOT EXISTS employers AUTHORIZATION employers;
 
 GRANT USAGE ON SCHEMA employers TO employers_ms;
 

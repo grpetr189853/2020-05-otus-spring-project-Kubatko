@@ -18,7 +18,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 mainClassName = 'ru.skubatko.dev.ees.hystrix.dashboard.HystrixDashboardApp'
 
 repositories {
-    mavenLocal()
     jcenter()
 }
 

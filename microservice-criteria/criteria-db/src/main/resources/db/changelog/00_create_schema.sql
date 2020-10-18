@@ -5,7 +5,7 @@ CREATE USER criteria WITH password 'criteria';
 CREATE USER criteria_ms WITH password 'criteria_ms';
 
 -- create schema
-CREATE SCHEMA criteria AUTHORIZATION criteria;
+CREATE SCHEMA IF NOT EXISTS criteria AUTHORIZATION criteria;
 
 GRANT USAGE ON SCHEMA criteria TO criteria_ms;
 
