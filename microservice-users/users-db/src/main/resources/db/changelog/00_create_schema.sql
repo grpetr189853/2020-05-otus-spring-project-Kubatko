@@ -5,7 +5,7 @@ CREATE USER users WITH password 'users';
 CREATE USER users_ms WITH password 'users_ms';
 
 -- create schema
-CREATE SCHEMA users AUTHORIZATION users;
+CREATE SCHEMA IF NOT EXISTS users AUTHORIZATION users;
 
 GRANT USAGE ON SCHEMA users TO users_ms;
 

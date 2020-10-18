@@ -5,7 +5,7 @@ CREATE USER ui WITH password 'ui';
 CREATE USER ui_ms WITH password 'ui_ms';
 
 -- create schema
-CREATE SCHEMA ui AUTHORIZATION ui;
+CREATE SCHEMA IF NOT EXISTS ui AUTHORIZATION ui;
 
 GRANT USAGE ON SCHEMA ui TO ui_ms;
 

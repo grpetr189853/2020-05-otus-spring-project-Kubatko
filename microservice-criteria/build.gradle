@@ -1,42 +1,21 @@
 plugins {
     id 'idea'
     id 'eclipse'
-    id 'java'
-    id 'application'
-    id 'org.springframework.boot' version '2.3.3.RELEASE'
 }
 
-allprojects {
-    apply plugin: 'java'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-
-    group = 'ru.skubatko.dev.ess'
-    description = 'criteria'
-    version = '0.0.1'
-
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
-    mainClassName = 'ru.skubatko.dev.ees.criteria.CriteriaServiceApp'
-
-    bootBuildImage {
-        imageName = "ees/criteria"
+idea {
+    project {
+        languageLevel = 11
     }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
 
+subprojects {
     repositories {
-        mavenLocal()
         jcenter()
-    }
-
-    idea {
-        project {
-            languageLevel = 11
-        }
-        module {
-            downloadJavadoc = true
-            downloadSources = true
-        }
     }
 
     tasks.withType(JavaCompile) {

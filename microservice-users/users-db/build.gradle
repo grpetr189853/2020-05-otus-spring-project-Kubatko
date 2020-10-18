@@ -1,11 +1,3 @@
-jar {
-    enabled = true
-}
-
-bootJar {
-    enabled = false
-}
-
-bootBuildImage {
-    enabled = false
+plugins {
+    id 'java-library'
 }

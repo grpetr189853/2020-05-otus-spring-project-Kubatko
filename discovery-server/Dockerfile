@@ -1,5 +1,5 @@
 # stage 1
-FROM openjdk:8-jdk-alpine AS build
+FROM openjdk:11-jdk-slim AS build
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -14,7 +14,7 @@ RUN ./gradlew --no-daemon bootJar -x test
 RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
 
 # stage 2
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jdk-slim
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -25,10 +25,7 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
-EXPOSE 8788
+EXPOSE 8761
 EXPOSE 5005
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
-RUN chmod +x /wait
-
-CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -cp app:app/lib/* ru.skubatko.dev.ees.hystrix.dashboard.HystrixDashboardApp
+ENTRYPOINT ["java","-XX:+AlwaysActAsServerClassMachine","-Djava.security.egd=file:/dev/./urandom","-cp","app:app/lib/*","ru.skubatko.dev.ees.discovery.server.DiscoveryServerApp"]
