@@ -1,3 +1,20 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.3.3.RELEASE'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'ru.skubatko.dev.ess'
+description = 'criteria'
+version = '0.0.1'
+
+mainClassName = 'ru.skubatko.dev.ees.criteria.CriteriaServiceApp'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -20,8 +37,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     implementation 'org.springframework.cloud:spring-cloud-starter'
@@ -40,6 +57,14 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'com.h2database:h2'
+}
+
+bootJar {
+    archiveVersion.set("")
+}
+
+bootBuildImage {
+    imageName = "ees/criteria"
 }
 
 test {
