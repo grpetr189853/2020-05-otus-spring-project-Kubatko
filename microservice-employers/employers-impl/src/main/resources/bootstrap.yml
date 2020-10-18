@@ -1,3 +1,6 @@
 spring:
   application:
     name: employers
+  cloud:
+    config:
+      fail-fast: true

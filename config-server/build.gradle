@@ -9,13 +9,13 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 group = 'ru.skubatko.dev.ees'
-description = 'discovery-server'
+description = 'config-server'
 version = '0.0.1'
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-mainClassName = 'ru.skubatko.dev.ees.discovery.server.DiscoveryServerApp'
+mainClassName = 'ru.skubatko.dev.ees.config.server.ConfigServerApp'
 
 repositories {
     jcenter()
@@ -23,7 +23,7 @@ repositories {
 
 
 bootBuildImage {
-    imageName = "ees/discovery-server"
+    imageName = "ees/config-server"
 }
 
 configurations {
@@ -47,8 +47,7 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
-    implementation("org.springframework.cloud:spring-cloud-config-client")
+    implementation("org.springframework.cloud:spring-cloud-config-server")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
