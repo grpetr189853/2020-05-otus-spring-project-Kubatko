@@ -1,6 +1,8 @@
 spring:
   application:
     name: discovery-server
+
   cloud:
     config:
       fail-fast: true
+      uri: http://${CONFIG_HOST:localhost}:8888

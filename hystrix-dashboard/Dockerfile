@@ -10,7 +10,7 @@ COPY gradlew .
 COPY gradle gradle
 COPY *.gradle ./
 COPY src src
-RUN ./gradlew --no-daemon bootJar -x test
+RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
 RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
 
 # stage 2

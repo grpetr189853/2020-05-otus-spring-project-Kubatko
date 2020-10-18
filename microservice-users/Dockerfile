@@ -14,7 +14,7 @@ COPY users-db/src users-db/src
 COPY users-db/build.gradle users-db/build.gradle
 COPY users-impl/src users-impl/src
 COPY users-impl/build.gradle users-impl/build.gradle
-RUN ./gradlew --no-daemon bootJar -x test
+RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
 
 EXPOSE 8081
 EXPOSE 5005

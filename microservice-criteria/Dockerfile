@@ -14,7 +14,7 @@ COPY criteria-db/src criteria-db/src
 COPY criteria-db/build.gradle criteria-db/build.gradle
 COPY criteria-impl/src criteria-impl/src
 COPY criteria-impl/build.gradle criteria-impl/build.gradle
-RUN ./gradlew --no-daemon bootJar -x test
+RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
 
 EXPOSE 8083
 EXPOSE 5005

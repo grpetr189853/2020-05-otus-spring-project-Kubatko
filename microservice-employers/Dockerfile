@@ -14,7 +14,7 @@ COPY employers-db/src employers-db/src
 COPY employers-db/build.gradle employers-db/build.gradle
 COPY employers-impl/src employers-impl/src
 COPY employers-impl/build.gradle employers-impl/build.gradle
-RUN ./gradlew --no-daemon bootJar -x test
+RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
 
 EXPOSE 8082
 EXPOSE 5005

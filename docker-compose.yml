@@ -42,12 +42,15 @@ services:
     image: ees/discovery-server
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       WAIT_HOSTS: config-server:8888
     ports:
       - 8761:8761
     expose:
       - 8761
     restart: unless-stopped
+    depends_on:
+      - config-server
 
   hystrix-dashboard:
     container_name: hystrix-dashboard
@@ -57,6 +60,7 @@ services:
     image: ees/hystrix-dashboard
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       WAIT_HOSTS: config-server:8888, discovery:8761
     ports:
@@ -65,6 +69,7 @@ services:
       - 8788
     restart: unless-stopped
     depends_on:
+      - config-server
       - discovery
 
   zipkin:
@@ -86,6 +91,7 @@ services:
     image: ees/users
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -102,6 +108,7 @@ services:
       - 5006
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -114,6 +121,7 @@ services:
     image: ees/employers
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -130,6 +138,7 @@ services:
       - 5007
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -142,6 +151,7 @@ services:
     image: ees/criteria
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -158,6 +168,7 @@ services:
       - 5008
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -170,6 +181,7 @@ services:
     image: ees/ui
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       USERS_HOST: users
@@ -189,6 +201,7 @@ services:
       - 5005
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
