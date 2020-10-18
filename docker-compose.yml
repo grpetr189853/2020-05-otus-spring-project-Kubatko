@@ -43,6 +43,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
+      WAIT_HOSTS: discovery:8761
     ports:
       - 8788:8788
     expose:
@@ -77,6 +78,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
+      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
     ports:
       - 8081:8081
       - 5006:5005
@@ -104,6 +106,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
+      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
     ports:
       - 8082:8082
       - 5007:5007
@@ -131,6 +134,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
+      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
     ports:
       - 8083:8083
       - 5008:5008
@@ -161,6 +165,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
+      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411, users:8081, employers:8082, criteria:8083
     ports:
       - 8080:8080
       - 5005:5005

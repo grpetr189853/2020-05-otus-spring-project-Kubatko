@@ -19,4 +19,7 @@ RUN ./gradlew --no-daemon bootJar -x test
 EXPOSE 8081
 EXPOSE 5005
 
-ENTRYPOINT ["java","-XX:+AlwaysActAsServerClassMachine","-Djava.security.egd=file:/dev/./urandom","-jar","users-impl/build/libs/users-impl.jar"]
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
+RUN chmod +x /wait
+
+CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -jar users-impl/build/libs/users-impl.jar

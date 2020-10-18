@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByName(String name) {
-        emulateServiceDelay();
         return repository.findByName(name);
     }
 
@@ -104,6 +103,6 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     private void emulateServiceDelay() {
-        Thread.sleep(1000 + new Random().nextInt(4000));
+        Thread.sleep(new Random().nextInt(4000));
     }
 }

@@ -1,4 +1,3 @@
-# stage 1
 FROM openjdk:11-jdk-slim AS build
 
 ENV TZ=Europe/Moscow
@@ -20,4 +19,7 @@ RUN ./gradlew --no-daemon bootJar -x test
 EXPOSE 8082
 EXPOSE 5005
 
-ENTRYPOINT ["java","-XX:+AlwaysActAsServerClassMachine","-Djava.security.egd=file:/dev/./urandom","-jar","employers-impl/build/libs/employers-impl.jar"]
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
+RUN chmod +x /wait
+
+CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -jar employers-impl/build/libs/employers-impl.jar

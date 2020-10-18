@@ -23,6 +23,13 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: ui
 
+  sleuth:
+    sampler:
+      probability: 100
+
+  zipkin:
+    baseUrl: http://${ZIPKIN_HOST:localhost}:9411
+
 eureka:
   instance:
     instanceId: ${spring.application.name}:${server.port}
