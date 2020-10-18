@@ -1,0 +1,47 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="2020-09-16--0001-data-users" author="skubatko" runOnChange="true">
+        <loadUpdateData tableName="ees_users"
+                        primaryKey="id"
+                        file="csv/2020-09-16--0001-data-users.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="*"
+                        separator=";"
+                        encoding="UTF-8" />
+    </changeSet>
+
+    <changeSet id="2020-09-16--0002-data-employers" author="skubatko" runOnChange="true">
+        <loadUpdateData tableName="ees_employers"
+                        primaryKey="id"
+                        file="csv/2020-09-16--0002-data-employers.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="*"
+                        separator=";"
+                        encoding="UTF-8" />
+    </changeSet>
+
+    <changeSet id="2020-09-16--0003-data-criteria" author="skubatko" runOnChange="true">
+        <loadUpdateData tableName="ees_criteria"
+                        primaryKey="id"
+                        file="csv/2020-09-16--0003-data-criteria.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="*"
+                        separator=";"
+                        encoding="UTF-8" />
+    </changeSet>
+
+    <changeSet id="2020-09-16--0004-data-ratings" author="skubatko" runOnChange="true">
+        <loadUpdateData tableName="ees_ratings"
+                        primaryKey="id"
+                        file="csv/2020-09-16--0004-data-ratings.csv"
+                        relativeToChangelogFile="true"
+                        quotchar="*"
+                        separator=";"
+                        encoding="UTF-8" />
+    </changeSet>
+
+</databaseChangeLog>

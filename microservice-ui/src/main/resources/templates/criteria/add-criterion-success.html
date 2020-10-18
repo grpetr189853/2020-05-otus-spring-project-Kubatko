@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Criterion added</title>
+
+    <div th:replace="fragments/header :: header-head"></div>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container my-5">
+      <h2 class="mb-5">Criterion added successfully</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row" th:object="${criterion}">
+            <div class="form-group col-md-12">
+              <label for="name" class="col-form-label">Name</label>
+              <p id=name th:text="*{name}">name</p>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="author" class="col-form-label">Weight</label>
+              <p id=author th:text="*{weight}">weight</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mt-5">
+              <a th:href="@{/ees/criteria}" class="btn btn-primary"><i class="fas fa-home m-2"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

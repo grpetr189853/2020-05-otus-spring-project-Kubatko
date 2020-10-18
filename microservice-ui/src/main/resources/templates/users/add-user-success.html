@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Пользователь добавлен</title>
+
+    <div th:replace="fragments/header :: header-head"></div>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container my-5">
+      <h2 class="mb-5">Пользователь добавлен успешно</h2>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row" th:object="${user}">
+            <div class="form-group col-md-12">
+              <label for="name" class="col-form-label">Имя</label>
+              <p id=name th:text="*{name}">name</p>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="password" class="col-form-label">Пароль</label>
+              <p id=password th:text="*{password}">password</p>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="active" class="col-form-label">Активность</label>
+              <p id=active th:text="*{isActive}">true</p>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="roles" class="col-form-label">Роли</label>
+              <p id=roles th:text="*{roles}">roles</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 mt-5">
+              <a th:href="@{/ees/users}" class="btn btn-primary"><i class="fas fa-home m-2"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

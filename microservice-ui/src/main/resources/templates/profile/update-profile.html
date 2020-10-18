@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Редактирование профиля</title>
+
+    <div th:replace="fragments/header :: header-head"></div>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <div class="container my-5">
+      <h2 class="mb-5">Редактирование профиля</h2>
+      <p class="alert alert-danger" th:if="${error != null}" th:text="${error}"></p>
+      <div class="row">
+        <div class="col-md-12">
+          <form action="#" th:action="@{/ees/profile/update}" th:object="${profile}" method="post">
+            <div class="row">
+              <div class="form-group col-md-12">
+                <label for="name" class="col-form-label">Имя</label>
+                <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Name" readonly="readonly">
+              </div>
+              <div class="form-group col-md-12">
+                <label for="password" class="col-form-label">password</label>
+                <input type="password" th:field="*{password}" class="form-control" id="password" placeholder="password">
+              </div>
+              <div class="form-group col-md-12" hidden="hidden">
+                <label for="active" class="col-form-label">isActive</label>
+                <input type="text" th:field="*{isActive}" class="form-control" id="active" placeholder="true" readonly="readonly">
+              </div>
+              <div class="form-group col-md-12" hidden="hidden">
+                <label for="roles" class="col-form-label">Роли</label>
+                <input type="text" th:field="*{roles}" class="form-control" id="roles" placeholder="roles" readonly="readonly">
+              </div>
+              <div class="row">
+                <div class="col-md-12 mt-5">
+                  <input type="submit" class="btn btn-primary" value="Сохранить">
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DATABASE:postgres}?currentSchema=criteria
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+    schema: classpath:db/changelog/00_create_schema.sql
+    initialization-mode: always
+    continue-on-error: true
+
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    open-in-view: false
+    generate-ddl: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: criteria
+
+  sleuth:
+    sampler:
+      probability: 100
+
+  zipkin:
+    baseUrl: http://${ZIPKIN_HOST:localhost}:9411
+
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${server.port}
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_HOST:localhost}:8761/eureka
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+      circuitBreaker:
+        enabled: true
+        requestVolumeThreshold: 2
+
+ribbon:
+  ConnectTimeout: 3000
+  ReadTimeout: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate: INFO
+    ru.skubatko.dev: TRACE

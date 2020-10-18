@@ -1,0 +1,25 @@
+plugins {
+    id 'idea'
+    id 'eclipse'
+}
+
+idea {
+    project {
+        languageLevel = 11
+    }
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+subprojects {
+    repositories {
+        jcenter()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.compilerArgs = ['-Xlint:deprecation']
+    }
+}
