@@ -71,6 +71,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
+      ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DATABASE: ees
@@ -97,6 +98,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
+      ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DATABASE: ees
@@ -123,6 +125,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
+      ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DATABASE: ees
@@ -149,6 +152,7 @@ services:
     environment:
       TZ: 'Europe/Moscow'
       DISCOVERY_HOST: discovery
+      ZIPKIN_HOST: zipkin
       USERS_HOST: users
       EMPLOYERS_HOST: employers
       CRITERIA_HOST: criteria

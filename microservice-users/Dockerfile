@@ -19,4 +19,4 @@ RUN ./gradlew --no-daemon bootJar -x test
 EXPOSE 8081
 EXPOSE 5005
 
-ENTRYPOINT ["java","-XX:+AlwaysActAsServerClassMachine","-Djava.security.egd=file:/dev/./urandom","-jar","users-impl/build/libs/users-impl-0.0.1.jar"]
+ENTRYPOINT ["java","-XX:+AlwaysActAsServerClassMachine","-Djava.security.egd=file:/dev/./urandom","-jar","users-impl/build/libs/users-impl.jar"]

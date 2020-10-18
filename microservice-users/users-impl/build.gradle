@@ -15,10 +15,6 @@ mainClassName = 'ru.skubatko.dev.ees.users.UsersServiceApp'
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
-bootBuildImage {
-    imageName = "ees/users"
-}
-
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -61,6 +57,14 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'com.h2database:h2'
+}
+
+bootJar {
+    archiveVersion.set("")
+}
+
+bootBuildImage {
+    imageName = "ees/users"
 }
 
 test {
