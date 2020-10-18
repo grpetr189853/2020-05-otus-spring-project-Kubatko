@@ -1,34 +1,27 @@
-# stage 1
-FROM openjdk:11-jdk-slim AS build
+FROM adoptopenjdk/openjdk11:alpine-slim as builder
+WORKDIR /build
 
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+COPY . ./
+RUN sh gradlew -console verbose --no-build-cache --no-daemon assemble && mv build/libs/discovery-server.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
 
-WORKDIR /workspace/app
+FROM adoptopenjdk/openjdk11:alpine-slim
+WORKDIR /opt/app
+COPY --from=builder /build/dependencies/ ./
+COPY --from=builder /build/spring-boot-loader/ ./
+COPY --from=builder /build/application/ ./
 
-COPY gradlew .
-COPY gradle gradle
-COPY *.gradle ./
-COPY src src
-RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
-RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
+WORKDIR /
 
-# stage 2
-FROM openjdk:11-jdk-slim
-
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-
-EXPOSE 8761
+EXPOSE 8081
 EXPOSE 5005
+
+VOLUME /ees-discovery-server
+
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
 RUN chmod +x /wait
 
-CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -cp app:app/lib/* ru.skubatko.dev.ees.discovery.server.DiscoveryServerApp
+CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -cp /opt/app org.springframework.boot.loader.JarLauncher

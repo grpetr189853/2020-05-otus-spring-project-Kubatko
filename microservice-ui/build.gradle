@@ -17,10 +17,6 @@ targetCompatibility = JavaVersion.VERSION_11
 
 mainClassName = 'ru.skubatko.dev.ees.ui.EesMainApp'
 
-bootBuildImage {
-    imageName = "ees/ui"
-}
-
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -92,6 +88,15 @@ idea {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.compilerArgs = ['-Xlint:deprecation']
+}
+
+bootJar {
+    archiveVersion.set("")
+    layered()
+}
+
+bootBuildImage {
+    imageName = "ees/ui"
 }
 
 test {

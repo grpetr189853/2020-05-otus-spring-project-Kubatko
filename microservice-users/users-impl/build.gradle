@@ -62,6 +62,7 @@ dependencies {
 
 bootJar {
     archiveVersion.set("")
+    layered()
 }
 
 bootBuildImage {
