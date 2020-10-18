@@ -2,6 +2,11 @@ server:
   port: 8761
 
 eureka:
+  instance:
+    instanceId: ${spring.application.name}:${server.port}
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 30
+    leaseExpirationDurationInSeconds: 90
   client:
     register-with-eureka: true
     fetch-registry: false
