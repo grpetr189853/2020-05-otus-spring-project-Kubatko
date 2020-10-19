@@ -48,6 +48,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
+    implementation("org.springframework.cloud:spring-cloud-config-client")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -62,6 +63,16 @@ idea {
         downloadJavadoc = true
         downloadSources = true
     }
+}
+
+
+bootJar {
+    archiveVersion.set("")
+    layered()
+}
+
+bootBuildImage {
+    imageName = "ees/discovery-server"
 }
 
 tasks.withType(JavaCompile) {
