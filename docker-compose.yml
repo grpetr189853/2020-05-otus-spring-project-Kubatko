@@ -4,6 +4,20 @@ volumes:
   postgres-data:
 
 services:
+  config-server:
+    container_name: config-server
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    image: ees/config-server
+    environment:
+      TZ: 'Europe/Moscow'
+    ports:
+      - 8888:8888
+    expose:
+      - 8888
+    restart: unless-stopped
+
   db:
     container_name: db
     image: postgres
@@ -28,11 +42,16 @@ services:
     image: ees/discovery-server
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
+      DISCOVERY_HOST: discovery
+      WAIT_HOSTS: config-server:8888
     ports:
       - 8761:8761
     expose:
       - 8761
     restart: unless-stopped
+    depends_on:
+      - config-server
 
   hystrix-dashboard:
     container_name: hystrix-dashboard
@@ -42,14 +61,16 @@ services:
     image: ees/hystrix-dashboard
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
-      WAIT_HOSTS: discovery:8761
+      WAIT_HOSTS: config-server:8888, discovery:8761
     ports:
       - 8788:8788
     expose:
       - 8788
     restart: unless-stopped
     depends_on:
+      - config-server
       - discovery
 
   zipkin:
@@ -71,6 +92,7 @@ services:
     image: ees/users
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -78,7 +100,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
-      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
     ports:
       - 8081:8081
       - 5006:5005
@@ -87,6 +109,7 @@ services:
       - 5006
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -99,6 +122,7 @@ services:
     image: ees/employers
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -106,7 +130,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
-      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
     ports:
       - 8082:8082
       - 5007:5007
@@ -115,6 +139,7 @@ services:
       - 5007
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -127,6 +152,7 @@ services:
     image: ees/criteria
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       POSTGRES_HOST: db
@@ -134,7 +160,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
-      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
     ports:
       - 8083:8083
       - 5008:5008
@@ -143,6 +169,7 @@ services:
       - 5008
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin
@@ -155,6 +182,7 @@ services:
     image: ees/ui
     environment:
       TZ: 'Europe/Moscow'
+      CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       ZIPKIN_HOST: zipkin
       USERS_HOST: users
@@ -165,7 +193,7 @@ services:
       POSTGRES_DATABASE: ees
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
-      WAIT_HOSTS: db:5432, discovery:8761, zipkin:9411, users:8081, employers:8082, criteria:8083
+      WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411, users:8081, employers:8082, criteria:8083
     ports:
       - 8080:8080
       - 5005:5005
@@ -174,6 +202,7 @@ services:
       - 5005
     restart: unless-stopped
     depends_on:
+      - config-server
       - db
       - discovery
       - zipkin

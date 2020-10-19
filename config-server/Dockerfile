@@ -2,7 +2,7 @@ FROM adoptopenjdk/openjdk11:alpine-slim as builder
 WORKDIR /build
 
 COPY . ./
-RUN sh gradlew -console verbose --no-build-cache --no-daemon assemble && mv users-impl/build/libs/users-impl.jar app.jar
+RUN sh gradlew -console verbose --no-build-cache --no-daemon assemble && mv build/libs/config-server.jar app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM adoptopenjdk/openjdk11:alpine-slim
@@ -13,10 +13,10 @@ COPY --from=builder /build/application/ ./
 
 WORKDIR /
 
-EXPOSE 8081
+EXPOSE 8888
 EXPOSE 5005
 
-VOLUME /ees-users
+VOLUME /ees-config-server
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

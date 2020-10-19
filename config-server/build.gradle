@@ -3,22 +3,27 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'application'
-    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'org.springframework.boot' version '2.3.3.RELEASE'
 }
 
 apply plugin: 'io.spring.dependency-management'
 
 group = 'ru.skubatko.dev.ees'
-description = 'hystrix-dashboard'
+description = 'config-server'
 version = '0.0.1'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
-mainClassName = 'ru.skubatko.dev.ees.hystrix.dashboard.HystrixDashboardApp'
+mainClassName = 'ru.skubatko.dev.ees.config.server.ConfigServerApp'
 
 repositories {
     jcenter()
+}
+
+
+bootBuildImage {
+    imageName = "ees/config-server"
 }
 
 configurations {
@@ -28,7 +33,7 @@ configurations {
 }
 
 ext {
-    set('springCloudVersion', "Greenwich.SR2")
+    set('springCloudVersion', "Hoxton.SR8")
 }
 
 dependencyManagement {
@@ -40,12 +45,9 @@ dependencyManagement {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    compileOnly 'org.springframework.boot:spring-boot-devtools'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix-dashboard")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-turbine")
-    implementation("org.springframework.cloud:spring-cloud-config-client")
+    implementation("org.springframework.cloud:spring-cloud-config-server")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -54,12 +56,21 @@ dependencies {
 
 idea {
     project {
-        languageLevel = 8
+        languageLevel = 11
     }
     module {
         downloadJavadoc = true
         downloadSources = true
     }
+}
+
+bootJar {
+    archiveVersion.set("")
+    layered()
+}
+
+bootBuildImage {
+    imageName = "ees/config-server"
 }
 
 tasks.withType(JavaCompile) {

@@ -1,7 +1,6 @@
 server:
   port: 8788
 
-
 turbine:
   app-config: ui
   cluster-name-expression: new String("default")

@@ -1,3 +1,8 @@
 spring:
   application:
     name: criteria
+
+  cloud:
+    config:
+      fail-fast: true
+      uri: http://${CONFIG_HOST:localhost}:8888
