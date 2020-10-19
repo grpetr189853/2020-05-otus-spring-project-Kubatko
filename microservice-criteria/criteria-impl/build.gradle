@@ -51,6 +51,8 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
+    runtime 'io.micrometer:micrometer-registry-prometheus'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -58,6 +60,10 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'com.h2database:h2'
+}
+
+springBoot {
+    buildInfo()
 }
 
 bootJar {

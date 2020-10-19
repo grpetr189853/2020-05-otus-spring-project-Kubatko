@@ -65,6 +65,8 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
+    runtime 'io.micrometer:micrometer-registry-prometheus'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -88,6 +90,10 @@ idea {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
     options.compilerArgs = ['-Xlint:deprecation']
+}
+
+springBoot {
+    buildInfo()
 }
 
 bootJar {
