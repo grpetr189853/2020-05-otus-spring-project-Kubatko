@@ -21,7 +21,4 @@ VOLUME /ees-config-server
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
-RUN chmod +x /wait
-
-CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -cp /opt/app org.springframework.boot.loader.JarLauncher
+ENTRYPOINT ["java", "-XX:+AlwaysActAsServerClassMachine", "-Djava.security.egd=file:/dev/./urandom", "-cp", "/opt/app","org.springframework.boot.loader.JarLauncher"]
