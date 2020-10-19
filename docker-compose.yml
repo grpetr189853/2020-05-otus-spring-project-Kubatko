@@ -1,7 +1,9 @@
 version: "3.8"
 
 volumes:
-  postgres-data:
+  postgres-data: {}
+  prometheus_data: {}
+  grafana_data: {}
 
 services:
   config-server:
@@ -18,22 +20,6 @@ services:
       - 8888
     restart: unless-stopped
 
-  db:
-    container_name: db
-    image: postgres
-    environment:
-      TZ: 'Europe/Moscow'
-      POSTGRES_DB: ees
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
-    expose:
-      - 5432
-    restart: unless-stopped
-
   discovery:
     container_name: discovery
     build:
@@ -45,6 +31,7 @@ services:
       CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       WAIT_HOSTS: config-server:8888
+      WAIT_BEFORE_HOSTS: 15
     ports:
       - 8761:8761
     expose:
@@ -64,6 +51,8 @@ services:
       CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       WAIT_HOSTS: config-server:8888, discovery:8761
+      WAIT_HOSTS_TIMEOUT: 60
+      WAIT_BEFORE_HOSTS: 30
     ports:
       - 8788:8788
     expose:
@@ -84,6 +73,22 @@ services:
       - 9411
     restart: unless-stopped
 
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      TZ: 'Europe/Moscow'
+      POSTGRES_DB: ees
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    restart: unless-stopped
+
   users:
     container_name: users
     build:
@@ -101,6 +106,8 @@ services:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_BEFORE_HOSTS: 60
     ports:
       - 8081:8081
       - 5006:5005
@@ -131,6 +138,8 @@ services:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_BEFORE_HOSTS: 60
     ports:
       - 8082:8082
       - 5007:5007
@@ -161,6 +170,8 @@ services:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_BEFORE_HOSTS: 60
     ports:
       - 8083:8083
       - 5008:5008
@@ -194,6 +205,8 @@ services:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: postgres
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411, users:8081, employers:8082, criteria:8083
+      WAIT_HOSTS_TIMEOUT: 300
+      WAIT_BEFORE_HOSTS: 150
     ports:
       - 8080:8080
       - 5005:5005
@@ -209,3 +222,36 @@ services:
       - users
       - employers
       - criteria
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    environment:
+      TZ: 'Europe/Moscow'
+    volumes:
+      - prometheus_data:/prometheus
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    expose:
+      - 9090
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+    environment:
+      TZ: 'Europe/Moscow'
+      GF_SECURITY_ADMIN_USER: "${ADMIN_USER:-admin}"
+      GF_SECURITY_ADMIN_PASSWORD: "${ADMIN_PASSWORD:-admin123}"
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    restart: unless-stopped
+    depends_on:
+      - prometheus
