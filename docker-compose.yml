@@ -4,6 +4,9 @@ volumes:
   postgres-data: {}
   prometheus_data: {}
   grafana_data: {}
+  mongo_data: {}
+  es_data: {}
+  graylog_journal: {}
 
 services:
   config-server:
@@ -12,18 +15,13 @@ services:
       context: ./config-server
       dockerfile: Dockerfile
     image: ees/config-server
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "config-server"
     ports:
       - 8888:8888
     expose:
       - 8888
-    restart: unless-stopped
 
   discovery:
     container_name: discovery
@@ -31,22 +29,17 @@ services:
       context: ./discovery-server
       dockerfile: Dockerfile
     image: ees/discovery-server
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
       WAIT_HOSTS: config-server:8888
       WAIT_BEFORE_HOSTS: 15
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "discovery"
     ports:
       - 8761:8761
     expose:
       - 8761
-    restart: unless-stopped
     depends_on:
       - config-server
 
@@ -56,6 +49,7 @@ services:
       context: ./hystrix-dashboard
       dockerfile: Dockerfile
     image: ees/hystrix-dashboard
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -63,16 +57,10 @@ services:
       WAIT_HOSTS: config-server:8888, discovery:8761
       WAIT_HOSTS_TIMEOUT: 60
       WAIT_BEFORE_HOSTS: 30
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "hystrix-dashboard"
     ports:
       - 8788:8788
     expose:
       - 8788
-    restart: unless-stopped
     depends_on:
       - config-server
       - discovery
@@ -80,39 +68,29 @@ services:
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "zipkin"
     ports:
       - 9411:9411
     expose:
       - 9411
-    restart: unless-stopped
 
   db:
     container_name: db
     image: postgres
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       POSTGRES_DB: ees
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "db"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     expose:
       - 5432
-    restart: unless-stopped
 
   users:
     container_name: users
@@ -120,6 +98,7 @@ services:
       context: ./microservice-users
       dockerfile: Dockerfile
     image: ees/users
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -133,18 +112,12 @@ services:
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
       WAIT_HOSTS_TIMEOUT: 120
       WAIT_BEFORE_HOSTS: 60
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "users"
     ports:
       - 8081:8081
       - 5006:5005
     expose:
       - 8081
       - 5006
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -157,6 +130,7 @@ services:
       context: ./microservice-employers
       dockerfile: Dockerfile
     image: ees/employers
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -170,18 +144,12 @@ services:
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
       WAIT_HOSTS_TIMEOUT: 120
       WAIT_BEFORE_HOSTS: 60
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "employers"
     ports:
       - 8082:8082
       - 5007:5007
     expose:
       - 8082
       - 5007
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -194,6 +162,7 @@ services:
       context: ./microservice-criteria
       dockerfile: Dockerfile
     image: ees/criteria
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -207,18 +176,12 @@ services:
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411
       WAIT_HOSTS_TIMEOUT: 120
       WAIT_BEFORE_HOSTS: 60
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "criteria"
     ports:
       - 8083:8083
       - 5008:5008
     expose:
       - 8083
       - 5008
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -231,6 +194,7 @@ services:
       context: ./microservice-ui
       dockerfile: Dockerfile
     image: ees/ui
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -247,18 +211,12 @@ services:
       WAIT_HOSTS: config-server:8888, db:5432, discovery:8761, zipkin:9411, users:8081, employers:8082, criteria:8083
       WAIT_HOSTS_TIMEOUT: 300
       WAIT_BEFORE_HOSTS: 150
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"
-        tag: "ui"
     ports:
       - 8080:8080
       - 5005:5005
     expose:
       - 80
       - 5005
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -271,6 +229,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
     volumes:
@@ -280,11 +239,11 @@ services:
       - 9090:9090
     expose:
       - 9090
-    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
@@ -297,19 +256,24 @@ services:
       - 3000:3000
     expose:
       - 3000
-    restart: unless-stopped
     depends_on:
       - prometheus
 
   mongo:
     image: mongo:3
     container_name: mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
     environment:
       TZ: 'Europe/Moscow'
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10
     container_name: elasticsearch
+    restart: unless-stopped
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
     environment:
       - http.host=0.0.0.0
       - transport.host=localhost
@@ -328,6 +292,9 @@ services:
   graylog:
     image: graylog/graylog:3.3
     container_name: graylog
+    restart: unless-stopped
+    volumes:
+      - graylog_journal:/usr/share/graylog/data/journal
     environment:
       # CHANGE ME (must be at least 16 characters)!
       - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
@@ -342,10 +309,23 @@ services:
       # Graylog web interface and REST API
       - 9000:9000
       # Syslog TCP
-      - 1514:1514
+      - 8514:8514
       # Syslog UDP
-      - 1514:1514/udp
+      - 8514:8514/udp
       # GELF TCP
       - 12201:12201
       # GELF UDP
       - 12201:12201/udp
+
+  logspout:
+    image: gliderlabs/logspout:latest
+    container_name: logspout
+    restart: unless-stopped
+    environment:
+      TZ: 'Europe/Moscow'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      syslog://graylog:8514
+    depends_on:
+      - graylog

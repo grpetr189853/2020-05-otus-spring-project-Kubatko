@@ -67,7 +67,6 @@ springBoot {
 }
 
 bootJar {
-    archiveVersion.set("")
     layered()
 }
 

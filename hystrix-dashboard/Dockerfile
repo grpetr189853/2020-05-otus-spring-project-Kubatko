@@ -1,34 +1,25 @@
-# stage 1
-FROM openjdk:8-jdk-alpine AS build
+ARG APP_NAME=hystrix-dashboard
 
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# build stage
+FROM gradle:jdk8 as builder
+ADD ./ /build
+WORKDIR /build
+RUN gradle -console verbose --no-build-cache --no-daemon clean assemble && mv build/libs/*.jar app.jar
+RUN jar -xf app.jar
 
-WORKDIR /workspace/app
-
-COPY gradlew .
-COPY gradle gradle
-COPY *.gradle ./
-COPY src src
-RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble -x test
-RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
-
-# stage 2
-FROM openjdk:8-jdk-alpine
-
-ENV TZ=Europe/Moscow
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-
-EXPOSE 8788
-EXPOSE 5005
+# app stage
+FROM bellsoft/liberica-openjdk-alpine-musl:8
+COPY --from=builder /build/BOOT-INF/lib /opt/app/lib
+COPY --from=builder /build/META-INF /opt/app/META-INF
+COPY --from=builder /build/BOOT-INF/classes /opt/app
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
 RUN chmod +x /wait
 
-CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom -cp app:app/lib/* ru.skubatko.dev.ees.hystrix.dashboard.HystrixDashboardApp
+ARG APP_NAME
+RUN mkdir /opt/log
+
+EXPOSE 8788
+EXPOSE 5005
+
+CMD /wait && java -XX:+AlwaysActAsServerClassMachine -Djava.security.egd=file:/dev/./urandom $JAVA_OPTS -cp opt/app:opt/app/lib/* ru.skubatko.dev.ees.hystrix.dashboard.HystrixDashboardApp --logging.file=/opt/log/${APP_NAME}.log
