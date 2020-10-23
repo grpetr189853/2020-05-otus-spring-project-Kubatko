@@ -21,38 +21,45 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
-    @HystrixCommand(commandKey = "findUserByNameKey", fallbackMethod = "buildFallbackUser")
+    @HystrixCommand(commandKey = "findUserByNameKey", fallbackMethod = "buildFallbackFindUser")
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByName(String name) {
-        return repository.findByName(name);
+        emulateDbServiceDelay();
+        Optional<User> user = repository.findByName(name);
+        emulateFeignServiceDelay();
+        return user;
     }
 
     @SuppressWarnings("unused")
-    public Optional<User> buildFallbackUser(String name) {
+    public Optional<User> buildFallbackFindUser(String name) {
+        log.warn("buildFallbackFindUser() - verdict: failed findByName for name = {}", name);
         User user = new User("user", "", false, "USER");
         return Optional.of(user);
     }
 
-    @HystrixCommand(commandKey = "findAllUserKey", fallbackMethod = "buildFallbackUsers")
+    @HystrixCommand(commandKey = "findAllUserKey", fallbackMethod = "buildFallbackFindAllUsers")
     @Transactional(readOnly = true)
     @Override
     public List<User> findAll() {
-        emulateServiceDelay();
-        return repository.findAll();
+        emulateDbServiceDelay();
+        List<User> users = repository.findAll();
+        emulateFeignServiceDelay();
+        return users;
     }
 
     @SuppressWarnings("unused")
-    public List<User> buildFallbackUsers() {
+    public List<User> buildFallbackFindAllUsers() {
+        log.warn("buildFallbackFindAllUsers() - verdict: failed findAll");
         User user = new User("user", "", false, "USER");
         return List.of(user);
     }
 
-    @HystrixCommand(commandKey = "saveUserKey", fallbackMethod = "buildFallback")
+    @HystrixCommand(commandKey = "saveUserKey", fallbackMethod = "buildFallbackSaveUser")
     @Transactional
     @Override
     public void save(User user) {
-        emulateServiceDelay();
+        emulateDbServiceDelay();
         User newUser = user;
         Optional<User> persistedUserOptional = repository.findByName(user.getName());
         if (persistedUserOptional.isPresent()) {
@@ -63,13 +70,20 @@ public class UserServiceImpl implements UserService {
         }
 
         repository.save(newUser);
+        emulateFeignServiceDelay();
     }
 
-    @HystrixCommand(commandKey = "updateUserKey", fallbackMethod = "buildFallback")
+    @SuppressWarnings("unused")
+    public void buildFallbackSaveUser(User user) {
+        log.warn("buildFallbackFindAllUsers() - verdict: failed save user = {}", user);
+        throw new RuntimeException();
+    }
+
+    @HystrixCommand(commandKey = "updateUserKey", fallbackMethod = "buildFallbackUpdateUser")
     @Transactional
     @Override
     public void update(String name, User updatedUser) {
-        emulateServiceDelay();
+        emulateDbServiceDelay();
         Optional<User> userOptional = repository.findByName(name);
         if (userOptional.isEmpty()) {
             return;
@@ -81,28 +95,42 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(updatedUser.getIsActive());
         user.setRoles(updatedUser.getRoles());
         repository.save(user);
+        emulateFeignServiceDelay();
     }
 
-    @HystrixCommand(commandKey = "deleteUserKey", fallbackMethod = "buildFallback")
+    @SuppressWarnings("unused")
+    public void buildFallbackUpdateUser(String name, User updatedUser) {
+        log.warn("buildFallbackFindAllUsers() - verdict: failed update user with name = {}", name);
+        throw new RuntimeException();
+    }
+
+    @HystrixCommand(commandKey = "deleteUserKey", fallbackMethod = "buildFallbackDeleteUser")
     @Transactional
     @Override
     public void deleteByName(String name) {
-        emulateServiceDelay();
+        emulateDbServiceDelay();
         Optional<User> optionalUser = repository.findByName(name);
         if (optionalUser.isEmpty()) {
             return;
         }
 
         repository.delete(optionalUser.get());
+        emulateFeignServiceDelay();
     }
 
     @SuppressWarnings("unused")
-    public void buildFallback() {
-        log.warn("buildFallback() - verdict: user service is unavailable");
+    public void buildFallbackDeleteUser(String name) {
+        log.warn("buildFallbackDeleteUser() - verdict: failed delete user with name = {}", name);
+        throw new RuntimeException();
     }
 
     @SneakyThrows
-    private void emulateServiceDelay() {
+    private void emulateDbServiceDelay() {
+        Thread.sleep(new Random().nextInt(3000));
+    }
+
+    @SneakyThrows
+    private void emulateFeignServiceDelay() {
         Thread.sleep(new Random().nextInt(4000));
     }
 }

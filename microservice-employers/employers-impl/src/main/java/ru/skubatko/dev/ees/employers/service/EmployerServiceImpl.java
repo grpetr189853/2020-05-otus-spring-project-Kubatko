@@ -21,21 +21,28 @@ public class EmployerServiceImpl implements EmployerService {
     private final EmployerRepository repository;
     private final EmployerDtoToEntityMapper toEntityMapper;
 
-    @HystrixCommand(commandKey = "saveEmployerKey", fallbackMethod = "buildFallback")
+    @HystrixCommand(commandKey = "saveEmployerKey", fallbackMethod = "buildFallbackSaveEmployer")
     @Transactional
     @Override
     public void save(EmployerDto dto) {
-        emulateServiceDelay();
+        emulateDbServiceDelay();
         repository.save(toEntityMapper.map(dto));
+        emulateFeignServiceDelay();
     }
 
     @SuppressWarnings("unused")
-    public void buildFallback() {
-        log.warn("buildFallback() - verdict: user service is unavailable");
+    public void buildFallbackSaveEmployer(EmployerDto dto) {
+        log.warn("buildFallbackSaveEmployer() - verdict: employer cannot be saved for dto = {}", dto);
+        throw new RuntimeException();
     }
 
     @SneakyThrows
-    private void emulateServiceDelay() {
-        Thread.sleep(1000 + new Random().nextInt(4000));
+    private void emulateDbServiceDelay() {
+        Thread.sleep(new Random().nextInt(3000));
+    }
+
+    @SneakyThrows
+    private void emulateFeignServiceDelay() {
+        Thread.sleep(new Random().nextInt(4000));
     }
 }

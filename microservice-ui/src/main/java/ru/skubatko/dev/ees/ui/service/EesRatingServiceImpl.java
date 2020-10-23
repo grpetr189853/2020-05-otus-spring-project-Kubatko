@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +28,7 @@ public class EesRatingServiceImpl implements EesRatingService {
     private final EesEmployerRepository employerRepository;
     private final EesRatingRepository ratingRepository;
 
-    @HystrixCommand(commandKey = "findRatingsKey", fallbackMethod = "buildFallbackRatings")
+    @HystrixCommand(commandKey = "findRatingsKey", fallbackMethod = "buildFallbackFindRatings")
     @Transactional(readOnly = true)
     @Override
     public List<EesRatingDto> findByUserDesc(String userName) {
@@ -55,13 +54,13 @@ public class EesRatingServiceImpl implements EesRatingService {
     }
 
     @SuppressWarnings("unused")
-    public List<EesRatingDto> buildFallbackRatings(String userName) {
-        log.warn("buildFallbackRatings() - verdict: ratings service is unavailable");
+    public List<EesRatingDto> buildFallbackFindRatings(String userName) {
+        log.warn("buildFallbackRatings() - verdict: ratings service failed for userName = {}", userName);
         return Collections.emptyList();
     }
 
     @SneakyThrows
     private void emulateServiceDelay() {
-        Thread.sleep(1000 + new Random().nextInt(4000));
+        Thread.sleep(3000);
     }
 }
