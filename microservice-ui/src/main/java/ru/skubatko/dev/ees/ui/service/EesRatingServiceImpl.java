@@ -29,7 +29,7 @@ public class EesRatingServiceImpl implements EesRatingService {
     private final EesEmployerRepository employerRepository;
     private final EesRatingRepository ratingRepository;
 
-    @HystrixCommand(commandKey = "findRatingsKey", fallbackMethod = "buildFallbackRatings")
+    @HystrixCommand(commandKey = "findRatingsKey", fallbackMethod = "buildFallbackFindRatings")
     @Transactional(readOnly = true)
     @Override
     public List<EesRatingDto> findByUserDesc(String userName) {
@@ -55,13 +55,15 @@ public class EesRatingServiceImpl implements EesRatingService {
     }
 
     @SuppressWarnings("unused")
-    public List<EesRatingDto> buildFallbackRatings(String userName) {
-        log.warn("buildFallbackRatings() - verdict: ratings service is unavailable");
+    public List<EesRatingDto> buildFallbackFindRatings(String userName) {
+        log.warn("buildFallbackRatings() - verdict: ratings service failed for userName = {}", userName);
         return Collections.emptyList();
     }
 
     @SneakyThrows
     private void emulateServiceDelay() {
-        Thread.sleep(1000 + new Random().nextInt(4000));
+        int delay = new Random(System.currentTimeMillis()).nextInt(7) * 1000;
+        log.trace("emulateServiceDelay() - trace: delay (db<4500) = {}", delay);
+        Thread.sleep(delay);
     }
 }

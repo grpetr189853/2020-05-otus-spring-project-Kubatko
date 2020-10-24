@@ -67,7 +67,6 @@ idea {
 }
 
 bootJar {
-    archiveVersion.set("")
     layered()
 }
 

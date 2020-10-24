@@ -4,6 +4,9 @@ volumes:
   postgres-data: {}
   prometheus_data: {}
   grafana_data: {}
+  mongo_data: {}
+  es_data: {}
+  graylog_journal: {}
 
 services:
   config-server:
@@ -12,13 +15,13 @@ services:
       context: ./config-server
       dockerfile: Dockerfile
     image: ees/config-server
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
     ports:
       - 8888:8888
     expose:
       - 8888
-    restart: unless-stopped
 
   discovery:
     container_name: discovery
@@ -26,6 +29,7 @@ services:
       context: ./discovery-server
       dockerfile: Dockerfile
     image: ees/discovery-server
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -36,7 +40,6 @@ services:
       - 8761:8761
     expose:
       - 8761
-    restart: unless-stopped
     depends_on:
       - config-server
 
@@ -46,18 +49,18 @@ services:
       context: ./hystrix-dashboard
       dockerfile: Dockerfile
     image: ees/hystrix-dashboard
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
-      WAIT_HOSTS: config-server:8888, discovery:8761
+      WAIT_HOSTS: config-server:8888, discovery:8761, ui:8080
       WAIT_HOSTS_TIMEOUT: 60
       WAIT_BEFORE_HOSTS: 30
     ports:
       - 8788:8788
     expose:
       - 8788
-    restart: unless-stopped
     depends_on:
       - config-server
       - discovery
@@ -65,17 +68,18 @@ services:
   zipkin:
     container_name: zipkin
     image: openzipkin/zipkin
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
     ports:
       - 9411:9411
     expose:
       - 9411
-    restart: unless-stopped
 
   db:
     container_name: db
     image: postgres
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       POSTGRES_DB: ees
@@ -87,7 +91,6 @@ services:
       - 5432:5432
     expose:
       - 5432
-    restart: unless-stopped
 
   users:
     container_name: users
@@ -95,6 +98,7 @@ services:
       context: ./microservice-users
       dockerfile: Dockerfile
     image: ees/users
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -114,7 +118,6 @@ services:
     expose:
       - 8081
       - 5006
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -127,6 +130,7 @@ services:
       context: ./microservice-employers
       dockerfile: Dockerfile
     image: ees/employers
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -146,7 +150,6 @@ services:
     expose:
       - 8082
       - 5007
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -159,6 +162,7 @@ services:
       context: ./microservice-criteria
       dockerfile: Dockerfile
     image: ees/criteria
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -178,7 +182,6 @@ services:
     expose:
       - 8083
       - 5008
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -191,6 +194,7 @@ services:
       context: ./microservice-ui
       dockerfile: Dockerfile
     image: ees/ui
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
@@ -213,7 +217,6 @@ services:
     expose:
       - 80
       - 5005
-    restart: unless-stopped
     depends_on:
       - config-server
       - db
@@ -226,6 +229,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    restart: unless-stopped
     environment:
       TZ: 'Europe/Moscow'
     volumes:
@@ -235,11 +239,11 @@ services:
       - 9090:9090
     expose:
       - 9090
-    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
@@ -252,6 +256,76 @@ services:
       - 3000:3000
     expose:
       - 3000
-    restart: unless-stopped
     depends_on:
       - prometheus
+
+  mongo:
+    image: mongo:3
+    container_name: mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      TZ: 'Europe/Moscow'
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.8.10
+    container_name: elasticsearch
+    restart: unless-stopped
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=localhost
+      - network.host=0.0.0.0
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Europe/Moscow
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  graylog:
+    image: graylog/graylog:3.3
+    container_name: graylog
+    restart: unless-stopped
+    volumes:
+      - graylog_journal:/usr/share/graylog/data/journal
+    environment:
+      # CHANGE ME (must be at least 16 characters)!
+      - GRAYLOG_PASSWORD_SECRET=somepasswordpepper
+      # Password: admin
+      - GRAYLOG_ROOT_PASSWORD_SHA2=8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/
+      - TZ=Europe/Moscow
+    depends_on:
+      - mongo
+      - elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - 9000:9000
+      # Syslog TCP
+      - 8514:8514
+      # Syslog UDP
+      - 8514:8514/udp
+      # GELF TCP
+      - 12201:12201
+      # GELF UDP
+      - 12201:12201/udp
+
+  logspout:
+    image: gliderlabs/logspout:latest
+    container_name: logspout
+    restart: unless-stopped
+    environment:
+      TZ: 'Europe/Moscow'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      syslog://graylog:8514
+    depends_on:
+      - graylog
