@@ -60,6 +60,7 @@ zuul:
 feign:
   hystrix:
     enabled: true
+
   client:
     config:
       default:
@@ -73,7 +74,7 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 7000
+            timeoutInMilliseconds: 4500
       circuitBreaker:
         enabled: true
         requestVolumeThreshold: 3
@@ -114,4 +115,5 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    ru.skubatko.dev: DEBUG
+    org.hibernate: INFO
+    ru.skubatko.dev: TRACE

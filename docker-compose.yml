@@ -54,7 +54,7 @@ services:
       TZ: 'Europe/Moscow'
       CONFIG_HOST: config-server
       DISCOVERY_HOST: discovery
-      WAIT_HOSTS: config-server:8888, discovery:8761
+      WAIT_HOSTS: config-server:8888, discovery:8761, ui:8080
       WAIT_HOSTS_TIMEOUT: 60
       WAIT_BEFORE_HOSTS: 30
     ports:

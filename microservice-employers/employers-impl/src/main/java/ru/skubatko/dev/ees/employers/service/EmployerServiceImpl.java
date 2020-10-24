@@ -25,9 +25,8 @@ public class EmployerServiceImpl implements EmployerService {
     @Transactional
     @Override
     public void save(EmployerDto dto) {
-        emulateDbServiceDelay();
         repository.save(toEntityMapper.map(dto));
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
     }
 
     @SuppressWarnings("unused")
@@ -37,12 +36,9 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @SneakyThrows
-    private void emulateDbServiceDelay() {
-        Thread.sleep(new Random().nextInt(3000));
-    }
-
-    @SneakyThrows
-    private void emulateFeignServiceDelay() {
-        Thread.sleep(new Random().nextInt(4000));
+    private void emulateServiceDelay() {
+        int delay = new Random(System.currentTimeMillis()).nextInt(7) * 1000;
+        log.trace("emulateServiceDelay() - trace: delay (feign<4500, db<5500) = {}", delay);
+        Thread.sleep(delay);
     }
 }

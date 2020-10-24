@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,6 +62,8 @@ public class EesRatingServiceImpl implements EesRatingService {
 
     @SneakyThrows
     private void emulateServiceDelay() {
-        Thread.sleep(3000);
+        int delay = new Random(System.currentTimeMillis()).nextInt(7) * 1000;
+        log.trace("emulateServiceDelay() - trace: delay (db<4500) = {}", delay);
+        Thread.sleep(delay);
     }
 }

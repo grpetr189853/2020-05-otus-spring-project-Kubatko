@@ -25,9 +25,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByName(String name) {
-        emulateDbServiceDelay();
         Optional<User> user = repository.findByName(name);
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
         return user;
     }
 
@@ -42,9 +41,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public List<User> findAll() {
-        emulateDbServiceDelay();
         List<User> users = repository.findAll();
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
         return users;
     }
 
@@ -59,7 +57,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void save(User user) {
-        emulateDbServiceDelay();
         User newUser = user;
         Optional<User> persistedUserOptional = repository.findByName(user.getName());
         if (persistedUserOptional.isPresent()) {
@@ -70,7 +67,7 @@ public class UserServiceImpl implements UserService {
         }
 
         repository.save(newUser);
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
     }
 
     @SuppressWarnings("unused")
@@ -83,7 +80,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void update(String name, User updatedUser) {
-        emulateDbServiceDelay();
         Optional<User> userOptional = repository.findByName(name);
         if (userOptional.isEmpty()) {
             return;
@@ -95,7 +91,7 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(updatedUser.getIsActive());
         user.setRoles(updatedUser.getRoles());
         repository.save(user);
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
     }
 
     @SuppressWarnings("unused")
@@ -108,14 +104,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteByName(String name) {
-        emulateDbServiceDelay();
         Optional<User> optionalUser = repository.findByName(name);
         if (optionalUser.isEmpty()) {
             return;
         }
 
         repository.delete(optionalUser.get());
-        emulateFeignServiceDelay();
+        emulateServiceDelay();
     }
 
     @SuppressWarnings("unused")
@@ -125,12 +120,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @SneakyThrows
-    private void emulateDbServiceDelay() {
-        Thread.sleep(new Random().nextInt(3000));
-    }
-
-    @SneakyThrows
-    private void emulateFeignServiceDelay() {
-        Thread.sleep(new Random().nextInt(4000));
+    private void emulateServiceDelay() {
+        int delay = new Random(System.currentTimeMillis()).nextInt(7) * 1000;
+        log.trace("emulateServiceDelay() - trace: delay (feign<4500, db<5500) = {}", delay);
+        Thread.sleep(delay);
     }
 }
