@@ -48,13 +48,13 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 5500
       circuitBreaker:
         enabled: true
-        requestVolumeThreshold: 2
+        requestVolumeThreshold: 3
 
 ribbon:
-  ConnectTimeout: 3000
+  ConnectTimeout: 60000
   ReadTimeout: 60000
 
 springdoc:
@@ -72,6 +72,7 @@ management:
           - info
           - metrics
           - prometheus
+          - hystrix.stream
   endpoint:
     metrics:
       enabled: true

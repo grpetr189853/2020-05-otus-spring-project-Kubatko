@@ -21,21 +21,24 @@ public class CriterionServiceImpl implements CriterionService {
     private final CriterionRepository repository;
     private final CriterionDtoToEntityMapper toEntityMapper;
 
-    @HystrixCommand(commandKey = "saveCriterionKey", fallbackMethod = "buildFallback")
+    @HystrixCommand(commandKey = "saveCriterionKey", fallbackMethod = "buildFallbackSaveCriterion")
     @Transactional
     @Override
     public void save(CriterionDto dto) {
-        emulateServiceDelay();
         repository.save(toEntityMapper.map(dto));
+        emulateServiceDelay();
     }
 
     @SuppressWarnings("unused")
-    public void buildFallback() {
-        log.warn("buildFallback() - verdict: user service is unavailable");
+    public void buildFallbackSaveCriterion(CriterionDto dto) {
+        log.warn("buildFallbackSaveCriterion() - verdict: criterion cannot be saved for dto = {}", dto);
+        throw new RuntimeException();
     }
 
     @SneakyThrows
     private void emulateServiceDelay() {
-        Thread.sleep(1000 + new Random().nextInt(4000));
+        int delay = new Random(System.currentTimeMillis()).nextInt(7) * 1000;
+        log.trace("emulateServiceDelay() - trace: delay (feign<4500, db<5500) = {}", delay);
+        Thread.sleep(delay);
     }
 }

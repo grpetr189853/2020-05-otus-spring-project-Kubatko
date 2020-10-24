@@ -24,7 +24,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "ratings")
+@ToString(exclude = {"ratings","user"})
 @Table(name = "ees_employers")
 public class EesEmployer {
 
