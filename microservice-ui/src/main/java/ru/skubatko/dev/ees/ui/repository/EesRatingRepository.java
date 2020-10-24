@@ -5,6 +5,7 @@ import ru.skubatko.dev.ees.ui.domain.EesEmployer;
 import ru.skubatko.dev.ees.ui.domain.EesRating;
 import ru.skubatko.dev.ees.ui.domain.EesUser;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,5 +15,6 @@ public interface EesRatingRepository extends JpaRepository<EesRating, Long> {
 
     Optional<EesRating> findByUserAndEmployerAndCriterion(EesUser user, EesEmployer employer, EesCriterion criterion);
 
+    @EntityGraph(attributePaths = {"criterion"})
     Set<EesRating> findAllByUserAndEmployer(EesUser user, EesEmployer employer);
 }
