@@ -9,7 +9,7 @@
 
 ## Архитектура системы
 
-![EES Architecture](doc/pictures/EES Architecture.png)
+![EES%20Architecture](doc/pictures/EES%20Architecture.png)
 
 ## Работа с системой
 
