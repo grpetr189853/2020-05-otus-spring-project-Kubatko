@@ -1,8 +1,13 @@
 # Система оценки работодателей
-https://sergey-kubatko.atlassian.net/wiki/spaces/E/pages/4816923
 
-# Discovery server
+## Сервер обнаружения микросервисов (Discovery server)
 
-## Создание образа Docker
+Данный микросервис является централизованным узлом координации взаимодействия микросервисов. 
 
-    ./gradlew bootBuildImage -x test
+### Работа с микросервисом
+
+Микросервис доступен по адресу: [http://localhost:8761](http://localhost:8761)
+
+![Discovery server](../doc/screens/discovery-server.png)
+
+Параметры работы микросервиса можно узнать по линкам здесь: [http://localhost:8761/actuator/](http://localhost:8761/actuator/)
